@@ -1,0 +1,13 @@
+plot.title("Plot (ChaiScript)").font("Arial", 10)
+
+auto s1 = plot.createSeries("Random Walk")
+s1.plotStyle(PlotStyles.Lines).color(Colors.Steelblue)
+
+auto s2 = plot.createSeries("Random Walk (Smoothed)", s1)
+s2.plotStyle(PlotStyles.Lines).lineWidth(5.0).color(Colors.Red.fade(0.5)).smooth(Smooths.Bezier)
+
+var y = 0
+for(var x = 0; x < 1000; ++x) {
+  s1.append(x, y)
+  y += (rand(0, 1) == 0) ? -1 : 1
+}

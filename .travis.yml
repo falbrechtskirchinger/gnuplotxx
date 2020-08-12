@@ -1,0 +1,23 @@
+os: linux
+dist: bionic
+language: cpp
+addons:
+  apt:
+    sources:
+    - ubuntu-toolchain-r-test
+    packages:
+    - g++-10
+    - gnuplot
+services:
+  - xvfb
+script:
+  - export CXX=g++-10
+  - ${CXX} --version
+  - mkdir build
+  - cd build
+  - cmake ..
+  - make
+  - ./src/gpxx-demo1 < <(sleep 1; echo)
+  - ./src/gpxx-demo2 < <(sleep 1; echo)
+  - ./src/gpxx-chaiscript ../src/demo1.chai < <(sleep 1; echo)
+  - ./src/gpxx-chaiscript ../src/demo2.chai < <(sleep 1; echo)
