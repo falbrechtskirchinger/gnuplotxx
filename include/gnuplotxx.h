@@ -295,7 +295,7 @@ public:
   constexpr Ordinate y() const { return m_y; }
 
   // TODO Spaceship?
-  bool operator==(const AxesPair &rhs) {
+  bool operator==(const AxesPair &rhs) const {
     return m_x == rhs.m_x && m_y == rhs.m_y;
   }
 
