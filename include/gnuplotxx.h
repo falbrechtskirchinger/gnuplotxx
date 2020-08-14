@@ -554,7 +554,8 @@ struct SeriesDataPriv {
 struct SeriesPriv {
   SeriesPriv(PlotPriv &plot, SeriesDataPrivPtr data, std::string title)
       : plot(plot), data(data), title(std::move(title)),
-        plotStyle(PlotStyle::Points), lineWidth(1.0), pointSize(1.0) {}
+        plotStyle(PlotStyle::Points), lineWidth(1.0), pointSize(1.0),
+        axes(Axes::X1Y1) {}
 
   PlotPriv &plot;
 
@@ -567,6 +568,7 @@ struct SeriesPriv {
   std::optional<PointType> pointType;
   double pointSize;
   std::optional<Smooth> smooth;
+  AxesPair axes;
 
   bool dirty;
   bool removed;
@@ -902,6 +904,20 @@ public:
   std::optional<Smooth> smooth() const {
     assert(m_series);
     return m_series->smooth;
+  }
+
+  Series &axes(AxesPair axes) {
+    assert(m_series);
+    if (m_series->axes != axes) {
+      m_series->axes = axes;
+      m_series->dirty = true;
+    }
+    return *this;
+  }
+
+  AxesPair axes() const {
+    assert(m_series);
+    return m_series->axes;
   }
 
   template <Number... Ns> Series &append(Ns... args) {
@@ -1298,6 +1314,8 @@ public:
             smoothLUT.contains(series->smooth.value()))
           fmt::format_to(std::back_inserter(buf), " smooth {}",
                          smoothLUT[series->smooth.value()]);
+
+        fmt::format_to(std::back_inserter(buf), " axes {}", series->axes);
       }
 
       if (!first) {

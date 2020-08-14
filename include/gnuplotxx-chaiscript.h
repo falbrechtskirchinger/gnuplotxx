@@ -454,6 +454,11 @@ inline chaiscript::ModulePtr library() {
         }),
         "smooth"},
        {fun<std::optional<Smooth>, Series>(&Series::smooth), "smooth"},
+       {fun([](Series &self, AxesPair axes) -> Series {
+          return self.axes(axes);
+        }),
+        "axes"},
+       {fun<AxesPair, Series>(&Series::axes), "axes"},
        {fun([](Series &self, double v0, double v1) -> Series {
           return self.append(v0, v1);
         }),
