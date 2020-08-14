@@ -1059,13 +1059,13 @@ public:
       if (series->removed) {
         it = m_plot->series.erase(it);
         continue;
-      } else if (series->data->empty) {
-        it++;
-        continue;
       }
 
-      dirty |= series->dirty | series->data->dirty;
-      series->dirty = series->data->dirty = false;
+      if(!series->data->empty) {
+        dirty |= series->dirty | series->data->dirty;
+        series->dirty = series->data->dirty = false;
+      }
+      it++;
     }
 
     if (dirty) {
