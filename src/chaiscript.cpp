@@ -1,3 +1,4 @@
+#include <cmath>
 #include <cstdio>
 #include <iostream>
 #include <random>
@@ -32,6 +33,7 @@ int main(int argc, char *argv[]) {
              return dis(gen);
            }),
            "rand");
+  chai.add(fun([](double x) { return std::sin(x); }), "sin");
 
   auto plot = Plot("Plot");
   chai.add_global(var(plot), "plot");
