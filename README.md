@@ -6,7 +6,8 @@ gnuplotxx is a single-header C++20 gnuplot (Qt terminal) driver for your quick &
 
 # Usage
 
-Add the header file gnuplotxx.h (located in include/) to your project. Make sure you either have `<format>` or `<fmt/format.h>` from [fmtlib] in your include path.
+Add the header file `gnuplotxx.h` (located in include/) to your project.  
+Until C++20's `<format>` is available, we depend on [fmtlib]. Make sure you either have `<fmt/format.h>` in your include path or include this header manually, before including `gnuplotxx.h`.
 
 Create a plot window:
 ```cpp

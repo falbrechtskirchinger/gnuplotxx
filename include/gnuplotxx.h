@@ -40,16 +40,11 @@
 #include <sys/wait.h>
 #include <unistd.h>
 
-#if defined(__has_include) && __has_include(<format>)
-#include <format>
-namespace gnuplotxx::detail {
-using std::format_to;
-}
-#else
+#if defined(__has_include) && __has_include(<fmt/format.h>)
 #include <fmt/format.h>
-namespace gnuplotxx::detail {
-using fmt::format_to;
-}
+#else
+#pragma message                                                                \
+    "<fmt/format.h> not found! Make sure to include fmtlib prior to this header."
 #endif
 
 namespace gnuplotxx {
@@ -345,7 +340,7 @@ template <typename T> inline void toString(const T &t, std::string &buf) {
                           toString(upper, buf);
                         },
                         [&buf](double value) {
-                          format_to(std::back_inserter(buf), "{}", value);
+                          fmt::format_to(std::back_inserter(buf), "{}", value);
                         },
                         [&buf](AutoType) { buf += '*'; }},
              t);
@@ -599,7 +594,7 @@ struct PlotPriv {
 
 template <Number First, Number... Ns>
 void appendHelper(std::string &buf, First first, Ns... rest) {
-  format_to(std::back_inserter(buf), "{}", first);
+  fmt::format_to(std::back_inserter(buf), "{}", first);
   if constexpr (sizeof...(rest) > 0) {
     buf += ' ';
     appendHelper(buf, rest...);
@@ -609,7 +604,7 @@ void appendHelper(std::string &buf, First first, Ns... rest) {
 template <TupleLikeOfNumbers T, std::size_t I = 0>
 void appendHelper(std::string &buf, const T &t) {
   if constexpr (I < std::tuple_size_v<T>) {
-    format_to(std::back_inserter(buf), "{}", get<I>(t));
+    fmt::format_to(std::back_inserter(buf), "{}", get<I>(t));
     if constexpr (I < std::tuple_size_v<T> - 1) {
       buf += ' ';
       append<T, I + 1>(buf, t);
@@ -759,10 +754,10 @@ public:
     const auto &[plot, buf, data] = appendPrologue();
 
     if (first != last)
-      detail::format_to(std::back_inserter(buf), "print \"{}", *(first++));
+      fmt::format_to(std::back_inserter(buf), "print \"{}", *(first++));
 
     while (first != last)
-      detail::format_to(std::back_inserter(buf), " {}", *(first++));
+      fmt::format_to(std::back_inserter(buf), " {}", *(first++));
 
     buf += "\"\n";
 
@@ -803,7 +798,7 @@ public:
     auto &data = *m_series->data;
     buf.clear();
 
-    detail::format_to(std::back_inserter(buf), "undefine $_{}\n", data.id);
+    fmt::format_to(std::back_inserter(buf), "undefine $_{}\n", data.id);
     if (!plot.gp.write(buf))
       throw std::system_error(errno, std::generic_category(),
                               "Series: clear: write");
@@ -830,8 +825,8 @@ private:
     buf.clear();
 
     if (data->id != plot.activeDataId) {
-      detail::format_to(std::back_inserter(buf), "set print $_{} append\n",
-                        data->id);
+      fmt::format_to(std::back_inserter(buf), "set print $_{} append\n",
+                     data->id);
       plot.activeDataId = data->id;
     }
 
@@ -1061,7 +1056,7 @@ public:
         continue;
       }
 
-      if(!series->data->empty) {
+      if (!series->data->empty) {
         dirty |= series->dirty | series->data->dirty;
         series->dirty = series->data->dirty = false;
       }
@@ -1069,18 +1064,18 @@ public:
     }
 
     if (dirty) {
-      format_to(std::back_inserter(buf),
-                "set terminal qt enhanced title \"{}\" font \"{},{}\"",
-                m_plot->title, m_plot->font, m_plot->fontSize);
+      fmt::format_to(std::back_inserter(buf),
+                     "set terminal qt enhanced title \"{}\" font \"{},{}\"",
+                     m_plot->title, m_plot->font, m_plot->fontSize);
 
       if (m_plot->position.has_value()) {
         const auto &[x, y] = m_plot->position.value();
-        format_to(std::back_inserter(buf), " position {},{}", x, y);
+        fmt::format_to(std::back_inserter(buf), " position {},{}", x, y);
       }
 
       if (m_plot->size.has_value()) {
         const auto &[w, h] = m_plot->size.value();
-        format_to(std::back_inserter(buf), " size {},{}", w, h);
+        fmt::format_to(std::back_inserter(buf), " size {},{}", w, h);
       }
 
       buf += '\n';
@@ -1106,29 +1101,30 @@ public:
 
         first = false;
 
-        format_to(std::back_inserter(buf), "$_{} title \"{}\"",
-                  series->data->id, series->title);
+        fmt::format_to(std::back_inserter(buf), "$_{} title \"{}\"",
+                       series->data->id, series->title);
 
         if (plotStyleLUT.contains(series->plotStyle))
-          format_to(std::back_inserter(buf), " with {}",
-                    plotStyleLUT[series->plotStyle]);
+          fmt::format_to(std::back_inserter(buf), " with {}",
+                         plotStyleLUT[series->plotStyle]);
 
         if (series->color.has_value())
-          format_to(std::back_inserter(buf), " linecolor rgb {}",
-                    series->color.value().rgba());
+          fmt::format_to(std::back_inserter(buf), " linecolor rgb {}",
+                         series->color.value().rgba());
 
-        format_to(std::back_inserter(buf), " linewidth {}", series->lineWidth);
+        fmt::format_to(std::back_inserter(buf), " linewidth {}",
+                       series->lineWidth);
 
         if (series->pointType.has_value()) {
-          format_to(std::back_inserter(buf), " pointtype {} pointsize {}",
-                    static_cast<int>(series->pointType.value()) + 1,
-                    series->pointSize);
+          fmt::format_to(std::back_inserter(buf), " pointtype {} pointsize {}",
+                         static_cast<int>(series->pointType.value()) + 1,
+                         series->pointSize);
         }
 
         if (series->smooth.has_value() &&
             smoothLUT.contains(series->smooth.value()))
-          format_to(std::back_inserter(buf), " smooth {}",
-                    smoothLUT[series->smooth.value()]);
+          fmt::format_to(std::back_inserter(buf), " smooth {}",
+                         smoothLUT[series->smooth.value()]);
       }
 
       if (!first) {
