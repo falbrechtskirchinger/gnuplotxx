@@ -532,24 +532,16 @@ inline chaiscript::ModulePtr library() {
         }),
         "size"},
        {fun<std::optional<Size>, Plot>(&Plot::size), "size"},
-       {fun([](Plot &self, Range xRange) -> Plot {
-          return self.xRange(xRange);
+       {fun([](Plot &self, Axis axis, const Range &range) -> Plot {
+          return self.range(axis, range);
         }),
-        "xRange"},
-       {fun([](Plot &self, RangeValue min, RangeValue max) -> Plot {
-          return self.xRange(min, max);
+        "range"},
+       {fun([](Plot &self, Axis axis, const RangeValue &min,
+               const RangeValue &max) -> Plot {
+          return self.range(axis, min, max);
         }),
-        "xRange"},
-       {fun<Range, Plot>(&Plot::xRange), "xRange"},
-       {fun([](Plot &self, Range yRange) -> Plot {
-          return self.yRange(yRange);
-        }),
-        "yRange"},
-       {fun([](Plot &self, RangeValue min, RangeValue max) -> Plot {
-          return self.yRange(min, max);
-        }),
-        "yRange"},
-       {fun<Range, Plot>(&Plot::yRange), "yRange"},
+        "range"},
+       {fun<const Range &, Plot, Axis>(&Plot::range), "range"},
        {fun<Series, Plot, std::string>(&Plot::createSeries), "createSeries"},
        {fun<Series, Plot, std::string, const Series &>(&Plot::createSeries),
         "createSeries"},

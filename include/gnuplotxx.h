@@ -20,6 +20,7 @@
 
 #pragma once
 
+#include <array>
 #include <cassert>
 #include <concepts>
 #include <memory>
@@ -760,8 +761,7 @@ struct PlotPriv {
   std::optional<Point> position;
   std::optional<Size> size;
 
-  Range xRange;
-  Range yRange;
+  std::array<Range, Axes::Count> ranges;
 
   int nextDataId;
   int activeDataId;
@@ -1124,36 +1124,23 @@ public:
     return m_plot->size;
   }
 
-  Plot &xRange(Range xRange) {
+  Plot &range(Axis axis, const Range &range) {
     assert(m_plot);
-    if (m_plot->xRange != xRange) {
-      m_plot->xRange = xRange;
+    auto &m_range = m_plot->ranges[detail::axisIndex(axis)];
+    if (m_range != range) {
+      m_range = range;
       m_plot->dirty = true;
     }
     return *this;
   }
 
-  Plot &xRange(RangeValue min, RangeValue max) { return xRange({min, max}); }
-
-  Range xRange() const {
-    assert(m_plot);
-    return m_plot->xRange;
+  Plot &range(Axis axis, const RangeValue &min, const RangeValue &max) {
+    return range(axis, {min, max});
   }
 
-  Plot &yRange(Range yRange) {
+  const Range &range(Axis axis) const {
     assert(m_plot);
-    if (m_plot->yRange != yRange) {
-      m_plot->yRange = yRange;
-      m_plot->dirty = true;
-    }
-    return *this;
-  }
-
-  Plot &yRange(RangeValue min, RangeValue max) { return yRange({min, max}); }
-
-  Range yRange() const {
-    assert(m_plot);
-    return m_plot->yRange;
+    return m_plot->ranges[detail::axisIndex(axis)];
   }
 
   Series createSeries(std::string title) {
@@ -1266,7 +1253,15 @@ public:
 
       bool first = true;
 
-      // TODO Range handling
+      static constexpr std::array<std::pair<Axis, std::size_t>, Axes::Count>
+          axisWithIndex{
+              axisWithIndexPair(Axes::X1), axisWithIndexPair(Axes::Y1),
+              axisWithIndexPair(Axes::X2), axisWithIndexPair(Axes::Y2)};
+
+      for (auto [axis, index] : axisWithIndex) {
+        fmt::format_to(std::back_inserter(buf), "set {}range {}\n", axis,
+                       m_plot->ranges[index]);
+      }
 
       buf += "plot ";
 
