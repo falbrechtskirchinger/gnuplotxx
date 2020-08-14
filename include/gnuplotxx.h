@@ -660,7 +660,7 @@ public:
       close(execErrFds[0]);
       close(stdinFds[1]);
 
-      if (dup2(stdinFds[0], STDIN_FILENO) < 0)
+      if (!dup2(stdinFds[0], STDIN_FILENO))
         raiseError(errno, "child: dup2 (stdin)");
 
       close(stdinFds[0]);
@@ -669,9 +669,9 @@ public:
       if (nullFd < 0)
         raiseError(errno, "child: open (/dev/null)");
 
-      if (dup2(nullFd, STDOUT_FILENO) < 0)
+      if (!dup2(nullFd, STDOUT_FILENO))
         raiseError(errno, "child: dup2 (stdout)");
-      if (dup2(nullFd, STDERR_FILENO) < 0)
+      if (!dup2(nullFd, STDERR_FILENO))
         raiseError(errno, "child: dup2 (stderr)");
 
       close(nullFd);
