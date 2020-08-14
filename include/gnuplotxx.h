@@ -289,6 +289,79 @@ inline Limit operator<(const AutoType &, double value) { return {Auto, value}; }
 
 inline Limit operator<(double value, const AutoType &) { return {value, Auto}; }
 
+namespace detail {
+
+struct EmptyFormatSpecParser {
+  constexpr auto parse(fmt::format_parse_context &ctx) {
+    auto it = ctx.begin();
+
+    if (it != ctx.end() && *it != '}')
+      throw fmt::format_error("invalid format");
+
+    return it;
+  }
+};
+
+} // namespace detail
+
+} // namespace gnuplotxx
+
+template <>
+struct fmt::formatter<gnuplotxx::AutoType>
+    : gnuplotxx::detail::EmptyFormatSpecParser {
+  template <typename FormatContext>
+  auto format(const gnuplotxx::AutoType &, FormatContext &ctx) {
+    auto out = ctx.out();
+    *(out++) = '*';
+    return out;
+  }
+};
+
+template <>
+struct fmt::formatter<gnuplotxx::LimitValue>
+    : gnuplotxx::detail::EmptyFormatSpecParser {
+  template <typename FormatContext>
+  auto format(const gnuplotxx::LimitValue &value, FormatContext &ctx) {
+    return std::visit(
+        [&ctx](auto &&value) { return format_to(ctx.out(), "{}", value); },
+        value);
+  }
+};
+
+template <>
+struct fmt::formatter<gnuplotxx::Limit>
+    : gnuplotxx::detail::EmptyFormatSpecParser {
+  template <typename FormatContext>
+  auto format(const gnuplotxx::Limit &limit, FormatContext &ctx) {
+    const auto &[lower, upper] = limit;
+    return format_to(ctx.out(), "{}<{}", lower, upper);
+  }
+};
+
+template <>
+struct fmt::formatter<gnuplotxx::RangeValue>
+    : gnuplotxx::detail::EmptyFormatSpecParser {
+  template <typename FormatContext>
+  auto format(const gnuplotxx::RangeValue &value, FormatContext &ctx) {
+    return std::visit(
+        [&ctx](auto &&value) { return format_to(ctx.out(), "{}", value); },
+        value);
+  }
+};
+
+template <>
+struct fmt::formatter<gnuplotxx::Range>
+    : gnuplotxx::detail::EmptyFormatSpecParser {
+  template <typename FormatContext>
+  auto format(const gnuplotxx::Range &range, FormatContext &ctx) {
+    const auto &[min, max] = range;
+
+    return format_to(ctx.out(), "[{}:{}]", min, max);
+  }
+};
+
+namespace gnuplotxx {
+
 template <typename T>
 struct IsNumber
     : std::bool_constant<!std::is_same_v<std::remove_cv_t<T>, bool> &&
@@ -326,34 +399,6 @@ constexpr bool IsTupleLikeOfNumbersV = IsTupleLikeOfNumbers<T>::value;
 template <typename T> concept TupleLikeOfNumbers = IsTupleLikeOfNumbersV<T>;
 
 namespace detail {
-
-template <typename... Ts> struct overloaded : Ts... {
-  using Ts::operator()...;
-};
-template <typename... Ts> overloaded(Ts...) -> overloaded<Ts...>;
-
-template <typename T> inline void toString(const T &t, std::string &buf) {
-  std::visit(overloaded{[&buf](Limit limit) {
-                          const auto &[lower, upper] = limit;
-                          toString(lower, buf);
-                          buf += '<';
-                          toString(upper, buf);
-                        },
-                        [&buf](double value) {
-                          fmt::format_to(std::back_inserter(buf), "{}", value);
-                        },
-                        [&buf](AutoType) { buf += '*'; }},
-             t);
-}
-
-inline void toString(const Range &range, std::string &buf) {
-  const auto &[min, max] = range;
-  buf += '[';
-  toString(min, buf);
-  buf += ':';
-  toString(max, buf);
-  buf += ']';
-}
 
 struct SeriesDataPriv;
 using SeriesDataPrivPtr = std::shared_ptr<SeriesDataPriv>;
@@ -1087,10 +1132,9 @@ public:
 
       bool first = true;
 
+      // TODO Range handling
+
       buf += "plot ";
-      toString(m_plot->xRange, buf);
-      toString(m_plot->yRange, buf);
-      buf += ' ';
 
       for (auto series : m_plot->series) {
         if (series->data->empty)
