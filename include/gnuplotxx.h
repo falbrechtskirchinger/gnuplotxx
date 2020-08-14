@@ -274,6 +274,51 @@ static inline std::unordered_map<Smooth, std::string_view> smoothLUT = {
 using Point = std::pair<int, int>;
 using Size = std::pair<unsigned int, unsigned int>;
 
+enum class Abscissa {
+  X1,
+  X2,
+};
+
+enum class Ordinate {
+  Y1,
+  Y2,
+};
+
+using Axis = std::variant<Abscissa, Ordinate>;
+
+class AxesPair {
+  friend struct Axes;
+
+public:
+  constexpr Abscissa x() const { return m_x; }
+  constexpr Ordinate y() const { return m_y; }
+
+  // TODO Spaceship?
+  bool operator==(const AxesPair &rhs) {
+    return m_x == rhs.m_x && m_y == rhs.m_y;
+  }
+
+private:
+  constexpr AxesPair(Abscissa x, Ordinate y) : m_x(x), m_y(y) {}
+
+  Abscissa m_x;
+  Ordinate m_y;
+};
+
+struct Axes {
+  static constexpr auto X1 = Abscissa::X1;
+  static constexpr auto X2 = Abscissa::X2;
+  static constexpr auto Y1 = Ordinate::Y1;
+  static constexpr auto Y2 = Ordinate::Y2;
+
+  static constexpr AxesPair X1Y1{X1, Y1};
+  static constexpr AxesPair X1Y2{X1, Y2};
+  static constexpr AxesPair X2Y1{X2, Y1};
+  static constexpr AxesPair X2Y2{X2, Y2};
+
+  static constexpr std::size_t Count = 4;
+};
+
 struct AutoType {};
 
 inline bool operator==(const AutoType &, const AutoType &) { return true; }
@@ -302,9 +347,98 @@ struct EmptyFormatSpecParser {
   }
 };
 
+struct AxisFormatSpecParser {
+  constexpr auto parse(fmt::format_parse_context &ctx) {
+    auto it = ctx.begin(), end = ctx.end();
+    if (it != end && (*it == '1' || *it == '2'))
+      spec = *it++;
+
+    if (it != ctx.end() && *it != '}')
+      throw fmt::format_error("invalid format");
+
+    return it;
+  }
+
+  char spec = '1';
+};
+
+constexpr std::size_t axisIndex(const Axis &axis) {
+  return std::visit(
+      [](auto &&axis) -> std::size_t {
+        using T = std::decay_t<decltype(axis)>;
+        if constexpr (std::is_same_v<T, Abscissa>) {
+          if (axis == Abscissa::X2)
+            return 2;
+        } else if constexpr (std::is_same_v<T, Ordinate>) {
+          switch (axis) {
+          case Ordinate::Y1:
+            return 1;
+          case Ordinate::Y2:
+            return 3;
+          }
+        }
+        return 0;
+      },
+      axis);
+}
+
+constexpr std::pair<Axis, std::size_t> axisWithIndexPair(const Axis &axis) {
+  return {axis, axisIndex(axis)};
+}
+
 } // namespace detail
 
 } // namespace gnuplotxx
+
+template <>
+struct fmt::formatter<gnuplotxx::Abscissa>
+    : gnuplotxx::detail::AxisFormatSpecParser {
+  template <typename FormatContext>
+  auto format(const gnuplotxx::Abscissa &x, FormatContext &ctx) {
+    auto out = ctx.out();
+    auto v = static_cast<char>(x);
+    *(out++) = 'x';
+    if (v > 0 || spec == '2')
+      *(out++) = '1' + v;
+    return out;
+  }
+};
+
+template <>
+struct fmt::formatter<gnuplotxx::Ordinate>
+    : gnuplotxx::detail::AxisFormatSpecParser {
+  template <typename FormatContext>
+  auto format(const gnuplotxx::Ordinate &y, FormatContext &ctx) {
+    auto out = ctx.out();
+    auto v = static_cast<char>(y);
+    *(out++) = 'y';
+    if (v > 0 || spec == '2')
+      *(out++) = '1' + v;
+    return out;
+  }
+};
+
+template <>
+struct fmt::formatter<gnuplotxx::Axis>
+    : gnuplotxx::detail::AxisFormatSpecParser {
+  template <typename FormatContext>
+  auto format(const gnuplotxx::Axis &axis, FormatContext &ctx) {
+    return std::visit(
+        [spec = spec, &ctx](auto &&axis) {
+          return format_to(ctx.out(), (spec == '1' ? "{}" : "{:2}"), axis);
+        },
+        axis);
+  }
+};
+
+template <>
+struct fmt::formatter<gnuplotxx::AxesPair>
+    : gnuplotxx::detail::EmptyFormatSpecParser {
+  template <typename FormatContext>
+  auto format(const gnuplotxx::AxesPair &axes, FormatContext &ctx) {
+    return format_to(ctx.out(), "{:2}{:2}", axes.x(), axes.y());
+  }
+};
 
 template <>
 struct fmt::formatter<gnuplotxx::AutoType>

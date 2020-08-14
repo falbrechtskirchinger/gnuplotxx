@@ -337,6 +337,38 @@ inline chaiscript::ModulePtr library() {
   bootstrap::standard_library::pair_type<Limit>("PlotLimit", *lib);
   bootstrap::standard_library::pair_type<Range>("PlotRange", *lib);
 
+  utility::add_class<Abscissa>(
+      *lib, "Abscissa",
+      {{Abscissa::X1, "Abscissa_X1"}, {Abscissa::X2, "Abscissa_X2"}});
+
+  utility::add_class<Ordinate>(
+      *lib, "Ordinate",
+      {{Ordinate::Y1, "Ordinate_Y1"}, {Ordinate::Y2, "Ordinate_Y2"}});
+
+  utility::add_class<Axis>(*lib, "Axis",
+                           {constructor<Axis(Abscissa)>(),
+                            constructor<Axis(Ordinate)>(),
+                            constructor<Axis(const Axis &)>()},
+                           {});
+
+  lib->add(type_conversion<Abscissa, Axis>());
+  lib->add(type_conversion<Ordinate, Axis>());
+
+  utility::add_class<AxesPair>(*lib, "AxesPair",
+                               {constructor<AxesPair(const AxesPair &)>()}, {});
+
+  auto axes = dispatch::Dynamic_Object("Axes");
+  axes["X1"] = const_var(Axes::X1);
+  axes["X2"] = const_var(Axes::X2);
+  axes["Y1"] = const_var(Axes::Y1);
+  axes["Y2"] = const_var(Axes::Y2);
+  axes["X1Y1"] = const_var(Axes::X1Y1);
+  axes["X1Y2"] = const_var(Axes::X1Y2);
+  axes["X2Y1"] = const_var(Axes::X2Y1);
+  axes["X2Y2"] = const_var(Axes::X2Y2);
+  axes["Count"] = const_var(Axes::Count);
+  lib->add_global_const(const_var(axes), "Axes");
+
   utility::add_class<std::optional<Color>>(
       *lib, "OptionalColor",
       {constructor<std::optional<Color>()>(),
