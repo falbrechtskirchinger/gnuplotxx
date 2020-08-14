@@ -29,12 +29,12 @@ The plot is not automatically (re-)drawn. To display your data, use:
 plot.update();
 ```
 
-See demo1.cpp in src/ for a complete example.
+See `src/demo1.cpp` for a complete example.
 
 # ChaiScript
 
-The header gnuplotxx-chaiscript.h (also located in include/) offers integration with [ChaiScript].
-See chaiscript.cpp in src/ for a demonstration of how to use it.
+The header `gnuplotxx-chaiscript.h` (also located in include/) offers integration with [ChaiScript].
+See `src/chaiscript.cpp` for a demonstration of how to use it.
 
 
 [fmtlib]: <https://github.com/fmtlib/fmt>
