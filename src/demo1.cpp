@@ -5,7 +5,7 @@
 
 using namespace gnuplotxx;
 
-int main(int argc, char *argv[]) {
+int main([[maybe_unused]] int argc, [[maybe_unused]] char *argv[]) {
   auto plot = Plot("Plot");
   auto series = plot.createSeries("x^2");
 

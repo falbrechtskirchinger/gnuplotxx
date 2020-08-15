@@ -6,7 +6,7 @@
 
 using namespace gnuplotxx;
 
-int main(int argc, char *argv[]) {
+int main([[maybe_unused]] int argc, [[maybe_unused]] char *argv[]) {
   auto plot = Plot("Plot").range(Axes::Y2, -1.5, 1.5);
   auto series1 = plot.createSeries("x^2").plotStyle(PlotStyle::Lines);
   auto series2 = plot.createSeries("sin(5x)")

@@ -624,7 +624,7 @@ inline bool writeAll(int fd, const void *buf, std::size_t count) {
     } else if (ret >= 0) {
       written += ret;
     }
-  } while (written < count);
+  } while (static_cast<std::size_t>(written) < count);
 
   return true;
 }
@@ -693,7 +693,7 @@ public:
       throw std::system_error(errno, std::generic_category(),
                               "Process: epoll_create1");
 
-    epoll_event events[1] = {{.events = EPOLLIN}};
+    epoll_event events[1] = {{.events = EPOLLIN, .data = {}}};
 
     if (::epoll_ctl(epollFd, EPOLL_CTL_ADD, execErrFds[0], &events[0]) < 0)
       throw std::system_error(errno, std::generic_category(),

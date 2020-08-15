@@ -1,5 +1,12 @@
 add_library(gpxx INTERFACE)
 target_include_directories(gpxx INTERFACE ${PROJECT_SOURCE_DIR}/include)
+target_compile_options(
+  gpxx
+  INTERFACE
+    $<$<OR:$<CXX_COMPILER_ID:AppleClang>,$<CXX_COMPILER_ID:Clang>,$<CXX_COMPILER_ID:GNU>>:-Werror
+    -Wall
+    -Wextra
+    -Wno-comment>)
 target_sources(gpxx INTERFACE ${CMAKE_CURRENT_SOURCE_DIR}/fmt/format.cc)
 
 add_library(chaiscript INTERFACE)

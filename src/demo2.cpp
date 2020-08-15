@@ -6,7 +6,7 @@
 
 using namespace gnuplotxx;
 
-int main(int argc, char *argv[]) {
+int main([[maybe_unused]] int argc, [[maybe_unused]] char *argv[]) {
   auto plot = Plot("Plot").font("Arial", 10);
 
   auto series1 = plot.createSeries("Random Walk")
