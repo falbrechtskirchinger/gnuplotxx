@@ -555,7 +555,7 @@ struct SeriesPriv {
   SeriesPriv(PlotPriv &plot, SeriesDataPrivPtr data, std::string title)
       : plot(plot), data(data), title(std::move(title)),
         plotStyle(PlotStyle::Points), lineWidth(1.0), pointSize(1.0),
-        axes(Axes::X1Y1) {}
+        axes(Axes::X1Y1), axesDirty(true) {}
 
   PlotPriv &plot;
 
@@ -571,6 +571,7 @@ struct SeriesPriv {
   AxesPair axes;
 
   bool dirty;
+  bool axesDirty;
   bool removed;
 };
 
@@ -771,6 +772,7 @@ struct PlotPriv {
 
   std::string buf;
   bool dirty;
+  bool rangesDirty;
 };
 
 template <Number First, Number... Ns>
@@ -910,7 +912,7 @@ public:
     assert(m_series);
     if (m_series->axes != axes) {
       m_series->axes = axes;
-      m_series->dirty = true;
+      m_series->dirty = m_series->axesDirty = true;
     }
     return *this;
   }
@@ -1145,7 +1147,7 @@ public:
     auto &m_range = m_plot->ranges[detail::axisIndex(axis)];
     if (m_range != range) {
       m_range = range;
-      m_plot->dirty = true;
+      m_plot->dirty = m_plot->rangesDirty = true;
     }
     return *this;
   }
@@ -1230,17 +1232,26 @@ public:
     buf.clear();
 
     bool dirty = m_plot->dirty;
-    for (auto it = m_plot->series.begin();
-         !dirty && it != m_plot->series.end();) {
+    bool axesDirty = false;
+    std::array<bool, Axes::Count> axisUsed;
+    for (auto it = m_plot->series.begin(); it != m_plot->series.end();) {
       auto &series = *it;
       if (series->removed) {
         it = m_plot->series.erase(it);
+        dirty = true;
         continue;
       }
 
       if (!series->data->empty) {
         dirty |= series->dirty | series->data->dirty;
         series->dirty = series->data->dirty = false;
+
+        if (series->axesDirty) {
+          axisUsed[axisIndex(series->axes.x())] = true;
+          axisUsed[axisIndex(series->axes.y())] = true;
+          series->axesDirty = false;
+          axesDirty = true;
+        }
       }
       it++;
     }
@@ -1269,14 +1280,20 @@ public:
 
       bool first = true;
 
-      static constexpr std::array<std::pair<Axis, std::size_t>, Axes::Count>
-          axisWithIndex{
-              axisWithIndexPair(Axes::X1), axisWithIndexPair(Axes::Y1),
-              axisWithIndexPair(Axes::X2), axisWithIndexPair(Axes::Y2)};
+      if (m_plot->rangesDirty || axesDirty) {
+        for (auto [axis, index] :
+             {axisWithIndexPair(Axes::X1), axisWithIndexPair(Axes::Y1),
+              axisWithIndexPair(Axes::X2), axisWithIndexPair(Axes::Y2)}) {
+          fmt::format_to(std::back_inserter(buf), "set {}range {}\n", axis,
+                         m_plot->ranges[index]);
 
-      for (auto [axis, index] : axisWithIndex) {
-        fmt::format_to(std::back_inserter(buf), "set {}range {}\n", axis,
-                       m_plot->ranges[index]);
+          if (axisUsed[index])
+            fmt::format_to(std::back_inserter(buf),
+                           "set {}tics scale default\n", axis);
+          else
+            fmt::format_to(std::back_inserter(buf), "unset {}tics\n", axis);
+        }
+        m_plot->rangesDirty = false;
       }
 
       buf += "plot ";
