@@ -1,6 +1,6 @@
 plot.title("Plot (ChaiScript)").range(Axes.Y2, -1.5, 1.5)
-var s1 = plot.createSeries("x^2").plotStyle(PlotStyles.Lines)
-var s2 = plot.createSeries("sin(x)").plotStyle(PlotStyles.Lines).smooth(Smooths.CSplines).axes(Axes.X1Y2)
+var s1 = plot.createSeries("x^2").with(PlotStyles.Lines)
+var s2 = plot.createSeries("sin(x)").with(PlotStyles.Lines).smooth(Smooths.CSplines).axes(Axes.X1Y2)
 
 for(var x = 0.0; x < 5.0; x += 0.1) {
   s1.append(x, x * x)

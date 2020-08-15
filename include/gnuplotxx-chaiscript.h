@@ -413,10 +413,10 @@ inline chaiscript::ModulePtr library() {
         "title"},
        {fun<const std::string &, Series>(&Series::title), "title"},
        {fun([](Series &self, PlotStyle plotStyle) -> Series {
-          return self.plotStyle(plotStyle);
+          return self.with(plotStyle);
         }),
-        "plotStyle"},
-       {fun<PlotStyle, Series>(&Series::plotStyle), "plotStyle"},
+        "with"},
+       {fun<PlotStyle, Series>(&Series::with), "with"},
        {fun([](Series &self, std::optional<Color> color) -> Series {
           return self.color(color);
         }),

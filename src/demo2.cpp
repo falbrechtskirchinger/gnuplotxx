@@ -10,10 +10,10 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char *argv[]) {
   auto plot = Plot("Plot").font("Arial", 10);
 
   auto series1 = plot.createSeries("Random Walk")
-                     .plotStyle(PlotStyle::Lines)
+                     .with(PlotStyle::Lines)
                      .color(Colors::Steelblue);
   auto series2 = plot.createSeries("Random Walk (Smoothed)", series1)
-                     .plotStyle(PlotStyle::Lines)
+                     .with(PlotStyle::Lines)
                      .lineWidth(5.0)
                      .color(Colors::Red.fade(0.5))
                      .smooth(Smooth::Bezier);

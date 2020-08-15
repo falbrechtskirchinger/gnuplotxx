@@ -824,7 +824,7 @@ public:
     return m_series->title;
   }
 
-  Series &plotStyle(PlotStyle plotStyle) {
+  Series &with(PlotStyle plotStyle) {
     assert(m_series);
     if (m_series->plotStyle != plotStyle) {
       m_series->plotStyle = plotStyle;
@@ -833,7 +833,7 @@ public:
     return *this;
   }
 
-  PlotStyle plotStyle() const {
+  PlotStyle with() const {
     assert(m_series);
     return m_series->plotStyle;
   }
