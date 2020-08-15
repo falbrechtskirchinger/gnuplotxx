@@ -10,9 +10,6 @@ matrix:
             - ubuntu-toolchain-r-test
           packages:
             - g++-10
-            - gnuplot
-      services:
-        - xvfb
       env:
          - MATRIX_EVAL="CXX=g++-10"
     - os: linux
@@ -26,9 +23,6 @@ matrix:
           packages:
             - g++-10
             - clang-11
-            - gnuplot
-      services:
-        - xvfb
       env:
          - MATRIX_EVAL="CXX=clang++-11"
 
@@ -41,7 +35,3 @@ script:
   - cd build
   - cmake ..
   - make
-  - ./src/gpxx-demo1 < <(sleep 1; echo)
-  - ./src/gpxx-demo2 < <(sleep 1; echo)
-  - ./src/gpxx-chaiscript ../src/demo1.chai < <(sleep 1; echo)
-  - ./src/gpxx-chaiscript ../src/demo2.chai < <(sleep 1; echo)
