@@ -33,5 +33,5 @@ script:
   - ${CXX} --version
   - mkdir build
   - cd build
-  - cmake ..
-  - make
+  - cmake -DCMAKE_BUILD_TYPE:STRING=Debug ..
+  - make -j2
