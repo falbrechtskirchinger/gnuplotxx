@@ -343,10 +343,10 @@ namespace chaiscript
       }
 
       Type_Conversions(const Type_Conversions &t_other) = delete;
-      Type_Conversions(Type_Conversions &&) = default;
+      Type_Conversions(Type_Conversions &&) = delete;
 
       Type_Conversions &operator=(const Type_Conversions &) = delete;
-      Type_Conversions &operator=(Type_Conversions &&) = default;
+      Type_Conversions &operator=(Type_Conversions &&) = delete;
 
       const std::set<const std::type_info *, Less_Than> &thread_cache() const
       {
@@ -634,7 +634,7 @@ namespace chaiscript
         const std::map<std::string, Boxed_Value> &from_map = detail::Cast_Helper<const std::map<std::string, Boxed_Value> &>::cast(t_bv, nullptr);
 
         To map;
-        for (const std::pair<std::string, Boxed_Value> &p : from_map) {
+        for (const auto &p : from_map) {
           map.insert(std::make_pair(p.first, detail::Cast_Helper<typename To::mapped_type>::cast(p.second, nullptr)));
         }
 
