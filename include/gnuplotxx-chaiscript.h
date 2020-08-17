@@ -48,129 +48,166 @@ inline chaiscript::ModulePtr library() {
        {fun<Color, Color, int>(&Color::fade), "fade"},
        {fun<Color, Color, double>(&Color::fade), "fade"}});
 
-  /* Generated via:
-   * gnuplot <<<"show colors"  |& tail -n+2 | \
-   *   awk '/^ /{ \
-   *     c = ""; \
-   *     n = split($1, a, "-"); \
-   *     for(i=1; i<=n; ++i) \
-   *       c = c sprintf("%s%s", toupper(substr(a[i], 1, 1)), \
-   *                             substr(a[i], 2)); \
-   *     printf("colors[\"%s\"] = const_var(Colors::%s);\n", c, c); }'
-   */
+  // Generated via:
+  // wget -qO -
+  // "https://en.wikipedia.org/wiki/Special:ExpandTemplates?wpInput={{X11 color
+  // chart}}" | sed 's/&amp;nbsp;//g' | awk '/\| colspan=/ { match($0,
+  // /'"'''"'/); $0=substr($0, RSTART+3); match($0, /'"'''"'/); $0=substr($0, 0,
+  // RSTART-1); print "// " $0} /\| ([A-Z][a-z]+)+ \|\|/ {  printf "colors[\""
+  // $2 "\"] = const_var(Colors::" $2 ");\n"}'
 
   auto colors = dispatch::Dynamic_Object("Colors");
-  colors["White"] = const_var(Colors::White);
-  colors["Black"] = const_var(Colors::Black);
-  colors["DarkGrey"] = const_var(Colors::DarkGrey);
-  colors["Red"] = const_var(Colors::Red);
-  colors["WebGreen"] = const_var(Colors::WebGreen);
-  colors["WebBlue"] = const_var(Colors::WebBlue);
-  colors["DarkMagenta"] = const_var(Colors::DarkMagenta);
-  colors["DarkCyan"] = const_var(Colors::DarkCyan);
-  colors["DarkOrange"] = const_var(Colors::DarkOrange);
-  colors["DarkYellow"] = const_var(Colors::DarkYellow);
-  colors["Royalblue"] = const_var(Colors::Royalblue);
-  colors["Goldenrod"] = const_var(Colors::Goldenrod);
-  colors["DarkSpringGreen"] = const_var(Colors::DarkSpringGreen);
-  colors["Purple"] = const_var(Colors::Purple);
-  colors["Steelblue"] = const_var(Colors::Steelblue);
-  colors["DarkRed"] = const_var(Colors::DarkRed);
-  colors["DarkChartreuse"] = const_var(Colors::DarkChartreuse);
-  colors["Orchid"] = const_var(Colors::Orchid);
-  colors["Aquamarine"] = const_var(Colors::Aquamarine);
-  colors["Brown"] = const_var(Colors::Brown);
-  colors["Yellow"] = const_var(Colors::Yellow);
-  colors["Turquoise"] = const_var(Colors::Turquoise);
-  colors["Grey0"] = const_var(Colors::Grey0);
-  colors["Grey10"] = const_var(Colors::Grey10);
-  colors["Grey20"] = const_var(Colors::Grey20);
-  colors["Grey30"] = const_var(Colors::Grey30);
-  colors["Grey40"] = const_var(Colors::Grey40);
-  colors["Grey50"] = const_var(Colors::Grey50);
-  colors["Grey60"] = const_var(Colors::Grey60);
-  colors["Grey70"] = const_var(Colors::Grey70);
-  colors["Grey"] = const_var(Colors::Grey);
-  colors["Grey80"] = const_var(Colors::Grey80);
-  colors["Grey90"] = const_var(Colors::Grey90);
-  colors["Grey100"] = const_var(Colors::Grey100);
-  colors["LightRed"] = const_var(Colors::LightRed);
-  colors["LightGreen"] = const_var(Colors::LightGreen);
-  colors["LightBlue"] = const_var(Colors::LightBlue);
-  colors["LightMagenta"] = const_var(Colors::LightMagenta);
-  colors["LightCyan"] = const_var(Colors::LightCyan);
-  colors["LightGoldenrod"] = const_var(Colors::LightGoldenrod);
+  // Pink colors
+  colors["MediumVioletRed"] = const_var(Colors::MediumVioletRed);
+  colors["DeepPink"] = const_var(Colors::DeepPink);
+  colors["PaleVioletRed"] = const_var(Colors::PaleVioletRed);
+  colors["HotPink"] = const_var(Colors::HotPink);
   colors["LightPink"] = const_var(Colors::LightPink);
-  colors["LightTurquoise"] = const_var(Colors::LightTurquoise);
-  colors["Gold"] = const_var(Colors::Gold);
-  colors["Green"] = const_var(Colors::Green);
-  colors["DarkGreen"] = const_var(Colors::DarkGreen);
-  colors["SpringGreen"] = const_var(Colors::SpringGreen);
-  colors["ForestGreen"] = const_var(Colors::ForestGreen);
-  colors["SeaGreen"] = const_var(Colors::SeaGreen);
-  colors["Blue"] = const_var(Colors::Blue);
-  colors["DarkBlue"] = const_var(Colors::DarkBlue);
-  colors["MidnightBlue"] = const_var(Colors::MidnightBlue);
-  colors["Navy"] = const_var(Colors::Navy);
-  colors["MediumBlue"] = const_var(Colors::MediumBlue);
-  colors["Skyblue"] = const_var(Colors::Skyblue);
-  colors["Cyan"] = const_var(Colors::Cyan);
-  colors["Magenta"] = const_var(Colors::Magenta);
-  colors["DarkTurquoise"] = const_var(Colors::DarkTurquoise);
-  colors["DarkPink"] = const_var(Colors::DarkPink);
-  colors["Coral"] = const_var(Colors::Coral);
+  colors["Pink"] = const_var(Colors::Pink);
+  // Red colors
+  colors["DarkRed"] = const_var(Colors::DarkRed);
+  colors["Red"] = const_var(Colors::Red);
+  colors["Firebrick"] = const_var(Colors::Firebrick);
+  colors["Crimson"] = const_var(Colors::Crimson);
+  colors["IndianRed"] = const_var(Colors::IndianRed);
   colors["LightCoral"] = const_var(Colors::LightCoral);
-  colors["OrangeRed"] = const_var(Colors::OrangeRed);
   colors["Salmon"] = const_var(Colors::Salmon);
   colors["DarkSalmon"] = const_var(Colors::DarkSalmon);
-  colors["Khaki"] = const_var(Colors::Khaki);
-  colors["DarkKhaki"] = const_var(Colors::DarkKhaki);
-  colors["DarkGoldenrod"] = const_var(Colors::DarkGoldenrod);
-  colors["Beige"] = const_var(Colors::Beige);
-  colors["Olive"] = const_var(Colors::Olive);
-  colors["Orange"] = const_var(Colors::Orange);
-  colors["Violet"] = const_var(Colors::Violet);
-  colors["DarkViolet"] = const_var(Colors::DarkViolet);
-  colors["Plum"] = const_var(Colors::Plum);
-  colors["DarkPlum"] = const_var(Colors::DarkPlum);
-  colors["DarkOlivegreen"] = const_var(Colors::DarkOlivegreen);
-  colors["Orangered4"] = const_var(Colors::Orangered4);
-  colors["Brown4"] = const_var(Colors::Brown4);
-  colors["Sienna4"] = const_var(Colors::Sienna4);
-  colors["Orchid4"] = const_var(Colors::Orchid4);
-  colors["Mediumpurple3"] = const_var(Colors::Mediumpurple3);
-  colors["Slateblue1"] = const_var(Colors::Slateblue1);
-  colors["Yellow4"] = const_var(Colors::Yellow4);
-  colors["Sienna1"] = const_var(Colors::Sienna1);
-  colors["Tan1"] = const_var(Colors::Tan1);
-  colors["Sandybrown"] = const_var(Colors::Sandybrown);
   colors["LightSalmon"] = const_var(Colors::LightSalmon);
-  colors["Pink"] = const_var(Colors::Pink);
-  colors["Khaki1"] = const_var(Colors::Khaki1);
-  colors["Lemonchiffon"] = const_var(Colors::Lemonchiffon);
+  // Orange colors
+  colors["OrangeRed"] = const_var(Colors::OrangeRed);
+  colors["Tomato"] = const_var(Colors::Tomato);
+  colors["DarkOrange"] = const_var(Colors::DarkOrange);
+  colors["Coral"] = const_var(Colors::Coral);
+  colors["Orange"] = const_var(Colors::Orange);
+  // Yellow colors
+  colors["DarkKhaki"] = const_var(Colors::DarkKhaki);
+  colors["Gold"] = const_var(Colors::Gold);
+  colors["Khaki"] = const_var(Colors::Khaki);
+  colors["PeachPuff"] = const_var(Colors::PeachPuff);
+  colors["Yellow"] = const_var(Colors::Yellow);
+  colors["PaleGoldenrod"] = const_var(Colors::PaleGoldenrod);
+  colors["Moccasin"] = const_var(Colors::Moccasin);
+  colors["PapayaWhip"] = const_var(Colors::PapayaWhip);
+  colors["LightGoldenrodYellow"] = const_var(Colors::LightGoldenrodYellow);
+  colors["LemonChiffon"] = const_var(Colors::LemonChiffon);
+  colors["LightYellow"] = const_var(Colors::LightYellow);
+  // Brown colors
+  colors["Maroon"] = const_var(Colors::Maroon);
+  colors["Brown"] = const_var(Colors::Brown);
+  colors["SaddleBrown"] = const_var(Colors::SaddleBrown);
+  colors["Sienna"] = const_var(Colors::Sienna);
+  colors["Chocolate"] = const_var(Colors::Chocolate);
+  colors["DarkGoldenrod"] = const_var(Colors::DarkGoldenrod);
+  colors["Peru"] = const_var(Colors::Peru);
+  colors["RosyBrown"] = const_var(Colors::RosyBrown);
+  colors["Goldenrod"] = const_var(Colors::Goldenrod);
+  colors["SandyBrown"] = const_var(Colors::SandyBrown);
+  colors["Tan"] = const_var(Colors::Tan);
+  colors["Burlywood"] = const_var(Colors::Burlywood);
+  colors["Wheat"] = const_var(Colors::Wheat);
+  colors["NavajoWhite"] = const_var(Colors::NavajoWhite);
   colors["Bisque"] = const_var(Colors::Bisque);
-  colors["Honeydew"] = const_var(Colors::Honeydew);
-  colors["Slategrey"] = const_var(Colors::Slategrey);
-  colors["Seagreen"] = const_var(Colors::Seagreen);
-  colors["Antiquewhite"] = const_var(Colors::Antiquewhite);
+  colors["BlanchedAlmond"] = const_var(Colors::BlanchedAlmond);
+  colors["Cornsilk"] = const_var(Colors::Cornsilk);
+  // Green colors
+  colors["DarkGreen"] = const_var(Colors::DarkGreen);
+  colors["Green"] = const_var(Colors::Green);
+  colors["DarkOliveGreen"] = const_var(Colors::DarkOliveGreen);
+  colors["ForestGreen"] = const_var(Colors::ForestGreen);
+  colors["SeaGreen"] = const_var(Colors::SeaGreen);
+  colors["Olive"] = const_var(Colors::Olive);
+  colors["OliveDrab"] = const_var(Colors::OliveDrab);
+  colors["MediumSeaGreen"] = const_var(Colors::MediumSeaGreen);
+  colors["LimeGreen"] = const_var(Colors::LimeGreen);
+  colors["Lime"] = const_var(Colors::Lime);
+  colors["SpringGreen"] = const_var(Colors::SpringGreen);
+  colors["MediumSpringGreen"] = const_var(Colors::MediumSpringGreen);
+  colors["DarkSeaGreen"] = const_var(Colors::DarkSeaGreen);
+  colors["MediumAquamarine"] = const_var(Colors::MediumAquamarine);
+  colors["YellowGreen"] = const_var(Colors::YellowGreen);
+  colors["LawnGreen"] = const_var(Colors::LawnGreen);
   colors["Chartreuse"] = const_var(Colors::Chartreuse);
-  colors["Greenyellow"] = const_var(Colors::Greenyellow);
+  colors["LightGreen"] = const_var(Colors::LightGreen);
+  colors["GreenYellow"] = const_var(Colors::GreenYellow);
+  colors["PaleGreen"] = const_var(Colors::PaleGreen);
+  // Cyan colors
+  colors["Teal"] = const_var(Colors::Teal);
+  colors["DarkCyan"] = const_var(Colors::DarkCyan);
+  colors["LightSeaGreen"] = const_var(Colors::LightSeaGreen);
+  colors["CadetBlue"] = const_var(Colors::CadetBlue);
+  colors["DarkTurquoise"] = const_var(Colors::DarkTurquoise);
+  colors["MediumTurquoise"] = const_var(Colors::MediumTurquoise);
+  colors["Turquoise"] = const_var(Colors::Turquoise);
+  colors["Aqua"] = const_var(Colors::Aqua);
+  colors["Cyan"] = const_var(Colors::Cyan);
+  colors["Aquamarine"] = const_var(Colors::Aquamarine);
+  colors["PaleTurquoise"] = const_var(Colors::PaleTurquoise);
+  colors["LightCyan"] = const_var(Colors::LightCyan);
+  // Blue colors
+  colors["Navy"] = const_var(Colors::Navy);
+  colors["DarkBlue"] = const_var(Colors::DarkBlue);
+  colors["MediumBlue"] = const_var(Colors::MediumBlue);
+  colors["Blue"] = const_var(Colors::Blue);
+  colors["MidnightBlue"] = const_var(Colors::MidnightBlue);
+  colors["RoyalBlue"] = const_var(Colors::RoyalBlue);
+  colors["SteelBlue"] = const_var(Colors::SteelBlue);
+  colors["DodgerBlue"] = const_var(Colors::DodgerBlue);
+  colors["DeepSkyBlue"] = const_var(Colors::DeepSkyBlue);
+  colors["CornflowerBlue"] = const_var(Colors::CornflowerBlue);
+  colors["SkyBlue"] = const_var(Colors::SkyBlue);
+  colors["LightSkyBlue"] = const_var(Colors::LightSkyBlue);
+  colors["LightSteelBlue"] = const_var(Colors::LightSteelBlue);
+  colors["LightBlue"] = const_var(Colors::LightBlue);
+  colors["PowderBlue"] = const_var(Colors::PowderBlue);
+  // Purple, violet, and magenta colors
+  colors["Indigo"] = const_var(Colors::Indigo);
+  colors["Purple"] = const_var(Colors::Purple);
+  colors["DarkMagenta"] = const_var(Colors::DarkMagenta);
+  colors["DarkViolet"] = const_var(Colors::DarkViolet);
+  colors["DarkSlateBlue"] = const_var(Colors::DarkSlateBlue);
+  colors["BlueViolet"] = const_var(Colors::BlueViolet);
+  colors["DarkOrchid"] = const_var(Colors::DarkOrchid);
+  colors["Fuchsia"] = const_var(Colors::Fuchsia);
+  colors["Magenta"] = const_var(Colors::Magenta);
+  colors["SlateBlue"] = const_var(Colors::SlateBlue);
+  colors["MediumSlateBlue"] = const_var(Colors::MediumSlateBlue);
+  colors["MediumOrchid"] = const_var(Colors::MediumOrchid);
+  colors["MediumPurple"] = const_var(Colors::MediumPurple);
+  colors["Orchid"] = const_var(Colors::Orchid);
+  colors["Violet"] = const_var(Colors::Violet);
+  colors["Plum"] = const_var(Colors::Plum);
+  colors["Thistle"] = const_var(Colors::Thistle);
+  colors["Lavender"] = const_var(Colors::Lavender);
+  // White colors
+  colors["MistyRose"] = const_var(Colors::MistyRose);
+  colors["AntiqueWhite"] = const_var(Colors::AntiqueWhite);
+  colors["Linen"] = const_var(Colors::Linen);
+  colors["Beige"] = const_var(Colors::Beige);
+  colors["WhiteSmoke"] = const_var(Colors::WhiteSmoke);
+  colors["LavenderBlush"] = const_var(Colors::LavenderBlush);
+  colors["OldLace"] = const_var(Colors::OldLace);
+  colors["AliceBlue"] = const_var(Colors::AliceBlue);
+  colors["Seashell"] = const_var(Colors::Seashell);
+  colors["GhostWhite"] = const_var(Colors::GhostWhite);
+  colors["Honeydew"] = const_var(Colors::Honeydew);
+  colors["FloralWhite"] = const_var(Colors::FloralWhite);
+  colors["Azure"] = const_var(Colors::Azure);
+  colors["MintCream"] = const_var(Colors::MintCream);
+  colors["Snow"] = const_var(Colors::Snow);
+  colors["Ivory"] = const_var(Colors::Ivory);
+  colors["White"] = const_var(Colors::White);
+  // Gray and black colors
+  colors["Black"] = const_var(Colors::Black);
+  colors["DarkSlateGray"] = const_var(Colors::DarkSlateGray);
+  colors["DimGray"] = const_var(Colors::DimGray);
+  colors["SlateGray"] = const_var(Colors::SlateGray);
   colors["Gray"] = const_var(Colors::Gray);
-  colors["LightGray"] = const_var(Colors::LightGray);
-  colors["LightGrey"] = const_var(Colors::LightGrey);
+  colors["LightSlateGray"] = const_var(Colors::LightSlateGray);
   colors["DarkGray"] = const_var(Colors::DarkGray);
-  colors["Slategray"] = const_var(Colors::Slategray);
-  colors["Gray0"] = const_var(Colors::Gray0);
-  colors["Gray10"] = const_var(Colors::Gray10);
-  colors["Gray20"] = const_var(Colors::Gray20);
-  colors["Gray30"] = const_var(Colors::Gray30);
-  colors["Gray40"] = const_var(Colors::Gray40);
-  colors["Gray50"] = const_var(Colors::Gray50);
-  colors["Gray60"] = const_var(Colors::Gray60);
-  colors["Gray70"] = const_var(Colors::Gray70);
-  colors["Gray80"] = const_var(Colors::Gray80);
-  colors["Gray90"] = const_var(Colors::Gray90);
-  colors["Gray100"] = const_var(Colors::Gray100);
+  colors["Silver"] = const_var(Colors::Silver);
+  colors["LightGray"] = const_var(Colors::LightGray);
+  colors["Gainsboro"] = const_var(Colors::Gainsboro);
   lib->add_global_const(const_var(colors), "Colors");
 
   // Generated via:

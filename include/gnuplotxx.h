@@ -80,127 +80,182 @@ private:
 };
 
 struct Colors {
+  // Colors taken from: https://en.wikipedia.org/wiki/Web_colors#Extended_colors
+
   // Generated via:
-  // gnuplot <<<"show colors"  |& tail -n+2 | \
-  //   awk '/^ /{ \
-  //     printf("static constexpr Color "); \
-  //     c = ""; \
-  //     n = split($1, a, "-"); \
-  //     for(i=1; i<=n; ++i) \
-  //       c = c sprintf("%s%s", toupper(substr(a[i], 1, 1)), \
-  //                             substr(a[i], 2)); \
-  //     printf("%-16s{%3d, %3d, %3d};\n", c, $4, $5, $6); }'
-  static constexpr Color White{255, 255, 255};
-  static constexpr Color Black{0, 0, 0};
-  static constexpr Color DarkGrey{160, 160, 160};
-  static constexpr Color Red{255, 0, 0};
-  static constexpr Color WebGreen{0, 192, 0};
-  static constexpr Color WebBlue{0, 128, 255};
-  static constexpr Color DarkMagenta{192, 0, 255};
-  static constexpr Color DarkCyan{0, 238, 238};
-  static constexpr Color DarkOrange{192, 64, 0};
-  static constexpr Color DarkYellow{200, 200, 0};
-  static constexpr Color Royalblue{65, 105, 225};
-  static constexpr Color Goldenrod{255, 192, 32};
-  static constexpr Color DarkSpringGreen{0, 128, 64};
-  static constexpr Color Purple{192, 128, 255};
-  static constexpr Color Steelblue{48, 96, 128};
-  static constexpr Color DarkRed{139, 0, 0};
-  static constexpr Color DarkChartreuse{64, 128, 0};
-  static constexpr Color Orchid{255, 128, 255};
-  static constexpr Color Aquamarine{127, 255, 212};
-  static constexpr Color Brown{165, 42, 42};
-  static constexpr Color Yellow{255, 255, 0};
-  static constexpr Color Turquoise{64, 224, 208};
-  static constexpr Color Grey0{0, 0, 0};
-  static constexpr Color Grey10{26, 26, 26};
-  static constexpr Color Grey20{51, 51, 51};
-  static constexpr Color Grey30{77, 77, 77};
-  static constexpr Color Grey40{102, 102, 102};
-  static constexpr Color Grey50{127, 127, 127};
-  static constexpr Color Grey60{153, 153, 153};
-  static constexpr Color Grey70{179, 179, 179};
-  static constexpr Color Grey{192, 192, 192};
-  static constexpr Color Grey80{204, 204, 204};
-  static constexpr Color Grey90{229, 229, 229};
-  static constexpr Color Grey100{255, 255, 255};
-  static constexpr Color LightRed{240, 50, 50};
-  static constexpr Color LightGreen{144, 238, 144};
-  static constexpr Color LightBlue{173, 216, 230};
-  static constexpr Color LightMagenta{240, 85, 240};
-  static constexpr Color LightCyan{224, 255, 255};
-  static constexpr Color LightGoldenrod{238, 221, 130};
-  static constexpr Color LightPink{255, 182, 193};
-  static constexpr Color LightTurquoise{175, 238, 238};
-  static constexpr Color Gold{255, 215, 0};
-  static constexpr Color Green{0, 255, 0};
-  static constexpr Color DarkGreen{0, 100, 0};
-  static constexpr Color SpringGreen{0, 255, 127};
-  static constexpr Color ForestGreen{34, 139, 34};
-  static constexpr Color SeaGreen{46, 139, 87};
-  static constexpr Color Blue{0, 0, 255};
-  static constexpr Color DarkBlue{0, 0, 139};
-  static constexpr Color MidnightBlue{25, 25, 112};
-  static constexpr Color Navy{0, 0, 128};
-  static constexpr Color MediumBlue{0, 0, 205};
-  static constexpr Color Skyblue{135, 206, 235};
-  static constexpr Color Cyan{0, 255, 255};
-  static constexpr Color Magenta{255, 0, 255};
-  static constexpr Color DarkTurquoise{0, 206, 209};
-  static constexpr Color DarkPink{255, 20, 147};
-  static constexpr Color Coral{255, 127, 80};
-  static constexpr Color LightCoral{240, 128, 128};
-  static constexpr Color OrangeRed{255, 69, 0};
-  static constexpr Color Salmon{250, 128, 114};
-  static constexpr Color DarkSalmon{233, 150, 122};
-  static constexpr Color Khaki{240, 230, 140};
-  static constexpr Color DarkKhaki{189, 183, 107};
-  static constexpr Color DarkGoldenrod{184, 134, 11};
-  static constexpr Color Beige{245, 245, 220};
-  static constexpr Color Olive{160, 128, 32};
-  static constexpr Color Orange{255, 165, 0};
-  static constexpr Color Violet{238, 130, 238};
-  static constexpr Color DarkViolet{148, 0, 211};
-  static constexpr Color Plum{221, 160, 221};
-  static constexpr Color DarkPlum{144, 80, 64};
-  static constexpr Color DarkOlivegreen{85, 107, 47};
-  static constexpr Color Orangered4{128, 20, 0};
-  static constexpr Color Brown4{128, 20, 20};
-  static constexpr Color Sienna4{128, 64, 20};
-  static constexpr Color Orchid4{128, 64, 128};
-  static constexpr Color Mediumpurple3{128, 96, 192};
-  static constexpr Color Slateblue1{128, 96, 255};
-  static constexpr Color Yellow4{128, 128, 0};
-  static constexpr Color Sienna1{255, 128, 64};
-  static constexpr Color Tan1{255, 160, 64};
-  static constexpr Color Sandybrown{255, 160, 96};
-  static constexpr Color LightSalmon{255, 160, 112};
-  static constexpr Color Pink{255, 192, 192};
-  static constexpr Color Khaki1{255, 255, 128};
-  static constexpr Color Lemonchiffon{255, 255, 192};
-  static constexpr Color Bisque{205, 183, 158};
-  static constexpr Color Honeydew{240, 255, 240};
-  static constexpr Color Slategrey{160, 182, 205};
-  static constexpr Color Seagreen{193, 255, 193};
-  static constexpr Color Antiquewhite{205, 192, 176};
-  static constexpr Color Chartreuse{124, 255, 64};
-  static constexpr Color Greenyellow{160, 255, 32};
-  static constexpr Color Gray{190, 190, 190};
-  static constexpr Color LightGray{211, 211, 211};
-  static constexpr Color LightGrey{211, 211, 211};
-  static constexpr Color DarkGray{160, 160, 160};
-  static constexpr Color Slategray{160, 182, 205};
-  static constexpr Color Gray0{0, 0, 0};
-  static constexpr Color Gray10{26, 26, 26};
-  static constexpr Color Gray20{51, 51, 51};
-  static constexpr Color Gray30{77, 77, 77};
-  static constexpr Color Gray40{102, 102, 102};
-  static constexpr Color Gray50{127, 127, 127};
-  static constexpr Color Gray60{153, 153, 153};
-  static constexpr Color Gray70{179, 179, 179};
-  static constexpr Color Gray80{204, 204, 204};
-  static constexpr Color Gray90{229, 229, 229};
-  static constexpr Color Gray100{255, 255, 255};
+  // wget -qO -
+  // "https://en.wikipedia.org/wiki/Special:ExpandTemplates?wpInput={{X11 color
+  // chart}}" | sed 's/&amp;nbsp;//g' | awk '/\| colspan=/ { match($0,
+  // /'"'''"'/); $0=substr($0, RSTART+3); match($0, /'"'''"'/); $0=substr($0, 0,
+  // RSTART-1); print "// " $0} /\| ([A-Z][a-z]+)+ \|\|/ {  printf "static
+  // inline constexpr Color " $2 "{" substr($5, 5) ", " $6 ", " $7 "}; \t\t\t//
+  // #" substr($3, 3) $4 substr($5, 0, 2) "\n"}'
+
+  // We recommend installing the VSCode extension colorize
+  // (kamikillerto.vscode-colorize) and adding the following configuration:
+  // "colorize.include": ["**/gnuplotxx.h"]
+
+  // Pink colors
+  static inline constexpr Color MediumVioletRed{199, 21, 133}; // #C71585
+  static inline constexpr Color DeepPink{255, 20, 147};        // #FF1493
+  static inline constexpr Color PaleVioletRed{219, 112, 147};  // #DB7093
+  static inline constexpr Color HotPink{255, 105, 180};        // #FF69B4
+  static inline constexpr Color LightPink{255, 182, 193};      // #FFB6C1
+  static inline constexpr Color Pink{255, 192, 203};           // #FFC0CB
+
+  // Red colors
+  static inline constexpr Color DarkRed{139, 0, 0};         // #8B0000
+  static inline constexpr Color Red{255, 0, 0};             // #FF0000
+  static inline constexpr Color Firebrick{178, 34, 34};     // #B22222
+  static inline constexpr Color Crimson{220, 20, 60};       // #DC143C
+  static inline constexpr Color IndianRed{205, 92, 92};     // #CD5C5C
+  static inline constexpr Color LightCoral{240, 128, 128};  // #F08080
+  static inline constexpr Color Salmon{250, 128, 114};      // #FA8072
+  static inline constexpr Color DarkSalmon{233, 150, 122};  // #E9967A
+  static inline constexpr Color LightSalmon{255, 160, 122}; // #FFA07A
+
+  // Orange colors
+  static inline constexpr Color OrangeRed{255, 69, 0};   // #FF4500
+  static inline constexpr Color Tomato{255, 99, 71};     // #FF6347
+  static inline constexpr Color DarkOrange{255, 140, 0}; // #FF8C00
+  static inline constexpr Color Coral{255, 127, 80};     // #FF7F50
+  static inline constexpr Color Orange{255, 165, 0};     // #FFA500
+
+  // Yellow colors
+  static inline constexpr Color DarkKhaki{189, 183, 107};            // #BDB76B
+  static inline constexpr Color Gold{255, 215, 0};                   // #FFD700
+  static inline constexpr Color Khaki{240, 230, 140};                // #F0E68C
+  static inline constexpr Color PeachPuff{255, 218, 185};            // #FFDAB9
+  static inline constexpr Color Yellow{255, 255, 0};                 // #FFFF00
+  static inline constexpr Color PaleGoldenrod{238, 232, 170};        // #EEE8AA
+  static inline constexpr Color Moccasin{255, 228, 181};             // #FFE4B5
+  static inline constexpr Color PapayaWhip{255, 239, 213};           // #FFEFD5
+  static inline constexpr Color LightGoldenrodYellow{250, 250, 210}; // #FAFAD2
+  static inline constexpr Color LemonChiffon{255, 250, 205};         // #FFFACD
+  static inline constexpr Color LightYellow{255, 255, 224};          // #FFFFE0
+
+  // Brown colors
+  static inline constexpr Color Maroon{128, 0, 0};             // #800000
+  static inline constexpr Color Brown{165, 42, 42};            // #A52A2A
+  static inline constexpr Color SaddleBrown{139, 69, 19};      // #8B4513
+  static inline constexpr Color Sienna{160, 82, 45};           // #A0522D
+  static inline constexpr Color Chocolate{210, 105, 30};       // #D2691E
+  static inline constexpr Color DarkGoldenrod{184, 134, 11};   // #B8860B
+  static inline constexpr Color Peru{205, 133, 63};            // #CD853F
+  static inline constexpr Color RosyBrown{188, 143, 143};      // #BC8F8F
+  static inline constexpr Color Goldenrod{218, 165, 32};       // #DAA520
+  static inline constexpr Color SandyBrown{244, 164, 96};      // #F4A460
+  static inline constexpr Color Tan{210, 180, 140};            // #D2B48C
+  static inline constexpr Color Burlywood{222, 184, 135};      // #DEB887
+  static inline constexpr Color Wheat{245, 222, 179};          // #F5DEB3
+  static inline constexpr Color NavajoWhite{255, 222, 173};    // #FFDEAD
+  static inline constexpr Color Bisque{255, 228, 196};         // #FFE4C4
+  static inline constexpr Color BlanchedAlmond{255, 235, 205}; // #FFEBCD
+  static inline constexpr Color Cornsilk{255, 248, 220};       // #FFF8DC
+
+  // Green colors
+  static inline constexpr Color DarkGreen{0, 100, 0};            // #006400
+  static inline constexpr Color Green{0, 128, 0};                // #008000
+  static inline constexpr Color DarkOliveGreen{85, 107, 47};     // #556B2F
+  static inline constexpr Color ForestGreen{34, 139, 34};        // #228B22
+  static inline constexpr Color SeaGreen{46, 139, 87};           // #2E8B57
+  static inline constexpr Color Olive{128, 128, 0};              // #808000
+  static inline constexpr Color OliveDrab{107, 142, 35};         // #6B8E23
+  static inline constexpr Color MediumSeaGreen{60, 179, 113};    // #3CB371
+  static inline constexpr Color LimeGreen{50, 205, 50};          // #32CD32
+  static inline constexpr Color Lime{0, 255, 0};                 // #00FF00
+  static inline constexpr Color SpringGreen{0, 255, 127};        // #00FF7F
+  static inline constexpr Color MediumSpringGreen{0, 250, 154};  // #00FA9A
+  static inline constexpr Color DarkSeaGreen{143, 188, 143};     // #8FBC8F
+  static inline constexpr Color MediumAquamarine{102, 205, 170}; // #66CDAA
+  static inline constexpr Color YellowGreen{154, 205, 50};       // #9ACD32
+  static inline constexpr Color LawnGreen{124, 252, 0};          // #7CFC00
+  static inline constexpr Color Chartreuse{127, 255, 0};         // #7FFF00
+  static inline constexpr Color LightGreen{144, 238, 144};       // #90EE90
+  static inline constexpr Color GreenYellow{173, 255, 47};       // #ADFF2F
+  static inline constexpr Color PaleGreen{152, 251, 152};        // #98FB98
+
+  // Cyan colors
+  static inline constexpr Color Teal{0, 128, 128};             // #008080
+  static inline constexpr Color DarkCyan{0, 139, 139};         // #008B8B
+  static inline constexpr Color LightSeaGreen{32, 178, 170};   // #20B2AA
+  static inline constexpr Color CadetBlue{95, 158, 160};       // #5F9EA0
+  static inline constexpr Color DarkTurquoise{0, 206, 209};    // #00CED1
+  static inline constexpr Color MediumTurquoise{72, 209, 204}; // #48D1CC
+  static inline constexpr Color Turquoise{64, 224, 208};       // #40E0D0
+  static inline constexpr Color Aqua{0, 255, 255};             // #00FFFF
+  static inline constexpr Color Cyan{0, 255, 255};             // #00FFFF
+  static inline constexpr Color Aquamarine{127, 255, 212};     // #7FFFD4
+  static inline constexpr Color PaleTurquoise{175, 238, 238};  // #AFEEEE
+  static inline constexpr Color LightCyan{224, 255, 255};      // #E0FFFF
+
+  // Blue colors
+  static inline constexpr Color Navy{0, 0, 128};               // #000080
+  static inline constexpr Color DarkBlue{0, 0, 139};           // #00008B
+  static inline constexpr Color MediumBlue{0, 0, 205};         // #0000CD
+  static inline constexpr Color Blue{0, 0, 255};               // #0000FF
+  static inline constexpr Color MidnightBlue{25, 25, 112};     // #191970
+  static inline constexpr Color RoyalBlue{65, 105, 225};       // #4169E1
+  static inline constexpr Color SteelBlue{70, 130, 180};       // #4682B4
+  static inline constexpr Color DodgerBlue{30, 144, 255};      // #1E90FF
+  static inline constexpr Color DeepSkyBlue{0, 191, 255};      // #00BFFF
+  static inline constexpr Color CornflowerBlue{100, 149, 237}; // #6495ED
+  static inline constexpr Color SkyBlue{135, 206, 235};        // #87CEEB
+  static inline constexpr Color LightSkyBlue{135, 206, 250};   // #87CEFA
+  static inline constexpr Color LightSteelBlue{176, 196, 222}; // #B0C4DE
+  static inline constexpr Color LightBlue{173, 216, 230};      // #ADD8E6
+  static inline constexpr Color PowderBlue{176, 224, 230};     // #B0E0E6
+
+  // Purple, violet, and magenta colors
+  static inline constexpr Color Indigo{75, 0, 130};             // #4B0082
+  static inline constexpr Color Purple{128, 0, 128};            // #800080
+  static inline constexpr Color DarkMagenta{139, 0, 139};       // #8B008B
+  static inline constexpr Color DarkViolet{148, 0, 211};        // #9400D3
+  static inline constexpr Color DarkSlateBlue{72, 61, 139};     // #483D8B
+  static inline constexpr Color BlueViolet{138, 43, 226};       // #8A2BE2
+  static inline constexpr Color DarkOrchid{153, 50, 204};       // #9932CC
+  static inline constexpr Color Fuchsia{255, 0, 255};           // #FF00FF
+  static inline constexpr Color Magenta{255, 0, 255};           // #FF00FF
+  static inline constexpr Color SlateBlue{106, 90, 205};        // #6A5ACD
+  static inline constexpr Color MediumSlateBlue{123, 104, 238}; // #7B68EE
+  static inline constexpr Color MediumOrchid{186, 85, 211};     // #BA55D3
+  static inline constexpr Color MediumPurple{147, 112, 219};    // #9370DB
+  static inline constexpr Color Orchid{218, 112, 214};          // #DA70D6
+  static inline constexpr Color Violet{238, 130, 238};          // #EE82EE
+  static inline constexpr Color Plum{221, 160, 221};            // #DDA0DD
+  static inline constexpr Color Thistle{216, 191, 216};         // #D8BFD8
+  static inline constexpr Color Lavender{230, 230, 250};        // #E6E6FA
+
+  // White colors
+  static inline constexpr Color MistyRose{255, 228, 225};     // #FFE4E1
+  static inline constexpr Color AntiqueWhite{250, 235, 215};  // #FAEBD7
+  static inline constexpr Color Linen{250, 240, 230};         // #FAF0E6
+  static inline constexpr Color Beige{245, 245, 220};         // #F5F5DC
+  static inline constexpr Color WhiteSmoke{245, 245, 245};    // #F5F5F5
+  static inline constexpr Color LavenderBlush{255, 240, 245}; // #FFF0F5
+  static inline constexpr Color OldLace{253, 245, 230};       // #FDF5E6
+  static inline constexpr Color AliceBlue{240, 248, 255};     // #F0F8FF
+  static inline constexpr Color Seashell{255, 245, 238};      // #FFF5EE
+  static inline constexpr Color GhostWhite{248, 248, 255};    // #F8F8FF
+  static inline constexpr Color Honeydew{240, 255, 240};      // #F0FFF0
+  static inline constexpr Color FloralWhite{255, 250, 240};   // #FFFAF0
+  static inline constexpr Color Azure{240, 255, 255};         // #F0FFFF
+  static inline constexpr Color MintCream{245, 255, 250};     // #F5FFFA
+  static inline constexpr Color Snow{255, 250, 250};          // #FFFAFA
+  static inline constexpr Color Ivory{255, 255, 240};         // #FFFFF0
+  static inline constexpr Color White{255, 255, 255};         // #FFFFFF
+
+  // Gray and black colors
+  static inline constexpr Color Black{0, 0, 0};                // #000000
+  static inline constexpr Color DarkSlateGray{47, 79, 79};     // #2F4F4F
+  static inline constexpr Color DimGray{105, 105, 105};        // #696969
+  static inline constexpr Color SlateGray{112, 128, 144};      // #708090
+  static inline constexpr Color Gray{128, 128, 128};           // #808080
+  static inline constexpr Color LightSlateGray{119, 136, 153}; // #778899
+  static inline constexpr Color DarkGray{169, 169, 169};       // #A9A9A9
+  static inline constexpr Color Silver{192, 192, 192};         // #C0C0C0
+  static inline constexpr Color LightGray{211, 211, 211};      // #D3D3D3
+  static inline constexpr Color Gainsboro{220, 220, 220};      // #DCDCDC
 };
 
 enum class PlotStyle {
