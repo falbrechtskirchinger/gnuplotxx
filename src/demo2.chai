@@ -1,7 +1,7 @@
 plot.title("Plot (ChaiScript)").font("Arial", 10)
 
 auto s1 = plot.createSeries("Random Walk")
-s1.with(PlotStyles.Lines).color(Colors.Steelblue)
+s1.with(PlotStyles.Lines).color(Colors.SteelBlue)
 
 auto s2 = plot.createSeries("Random Walk (Smoothed)", s1)
 s2.with(PlotStyles.Lines).lineWidth(5.0).color(Colors.Red.fade(0.5)).smooth(Smooths.Bezier)

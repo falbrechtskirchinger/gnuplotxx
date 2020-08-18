@@ -11,7 +11,7 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char *argv[]) {
 
   auto series1 = plot.createSeries("Random Walk")
                      .with(PlotStyle::Lines)
-                     .color(Colors::Steelblue);
+                     .color(Colors::SteelBlue);
   auto series2 = plot.createSeries("Random Walk (Smoothed)", series1)
                      .with(PlotStyle::Lines)
                      .lineWidth(5.0)
