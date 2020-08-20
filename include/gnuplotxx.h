@@ -565,6 +565,7 @@ namespace detail {
 
 template <typename T, std::size_t I = 0>
 constexpr bool isTupleLikeOfNumbersHelper() {
+  using std::get;
   if constexpr (I < std::tuple_size_v<T>) {
     bool ret = requires(T t) { IsNumberV<decltype(get<I>(t))>; };
 
@@ -841,11 +842,12 @@ void appendHelper(std::string &buf, First first, Ns... rest) {
 
 template <TupleLikeOfNumbers T, std::size_t I = 0>
 void appendHelper(std::string &buf, const T &t) {
+  using std::get;
   if constexpr (I < std::tuple_size_v<T>) {
     fmt::format_to(std::back_inserter(buf), "{}", get<I>(t));
     if constexpr (I < std::tuple_size_v<T> - 1) {
       buf += ' ';
-      append<T, I + 1>(buf, t);
+      appendHelper<T, I + 1>(buf, t);
     } else
       buf += '\n';
   }
