@@ -689,7 +689,7 @@ inline bool writeAll(int fd, const std::string &buf) {
   return writeAll(fd, buf.data(), buf.size());
 }
 
-class Process {
+class Process final {
 public:
   Process() : m_fd(-1) {
     int stdinFds[2], execErrFds[2];
@@ -788,6 +788,21 @@ public:
 
     m_fd = stdinFds[1];
   }
+
+  Process(const Process &) = delete;
+  Process &operator=(const Process &) = delete;
+
+  Process(Process &&other) : m_pid(other.m_pid), m_fd(other.m_fd) {
+    other.m_fd = -1;
+  }
+  Process &operator=(Process &&other) {
+    m_pid = other.m_pid;
+    m_fd = other.m_fd;
+
+    other.m_fd = -1;
+
+    return *this;
+  };
 
   ~Process() {
     if (m_fd < 0)
