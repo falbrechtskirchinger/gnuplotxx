@@ -691,7 +691,7 @@ inline bool writeAll(int fd, const std::string &buf) {
 
 class Process {
 public:
-  Process() : fd(-1) {
+  Process() : m_fd(-1) {
     int stdinFds[2], execErrFds[2];
 
     if (::pipe(stdinFds) < 0)
@@ -704,10 +704,10 @@ public:
     if (::fcntl(execErrFds[1], F_SETFD, FD_CLOEXEC) < 0)
       throw std::system_error(errno, std::generic_category(), "Process: fcntl");
 
-    if ((pid = ::fork()) < 0)
+    if ((m_pid = ::fork()) < 0)
       throw std::system_error(errno, std::generic_category(), "Process: fork");
 
-    if (pid == 0) {
+    if (m_pid == 0) {
       auto raiseError = [errFd = execErrFds[1]](int err, std::string_view msg) {
         writeAll(errFd, &err, sizeof(err));
         writeAll(errFd, msg.data(), msg.size());
@@ -786,25 +786,25 @@ public:
     close(execErrFds[1]);
     close(epollFd);
 
-    fd = stdinFds[1];
+    m_fd = stdinFds[1];
   }
 
   ~Process() {
-    if (fd < 0)
+    if (m_fd < 0)
       return;
 
-    close(fd);
-    while (::waitpid(pid, nullptr, 0) < 0) {
+    close(m_fd);
+    while (::waitpid(m_pid, nullptr, 0) < 0) {
       if (errno != EINTR)
         break;
     }
   }
 
-  bool write(const std::string &buf) { return writeAll(fd, buf); }
+  bool write(const std::string &buf) { return writeAll(m_fd, buf); }
 
 private:
-  pid_t pid;
-  int fd;
+  pid_t m_pid;
+  int m_fd;
 };
 
 struct PlotPriv {
