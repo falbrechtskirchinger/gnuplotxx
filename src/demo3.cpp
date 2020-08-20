@@ -1,6 +1,8 @@
 #include <cmath>
 #include <cstdio>
 #include <iostream>
+#include <utility>
+#include <vector>
 
 #include <gnuplotxx.h>
 
@@ -14,10 +16,15 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char *argv[]) {
                      .smooth(Smooth::CSplines)
                      .axes(Axes::X1Y2);
 
+  std::vector<std::pair<double, double>> vxSq, vsin2X;
+
   for (double x = 0; x < 5; x += 0.1) {
-    series1.append(x, x * x);
-    series2.append(x, std::sin(2 * x));
+    vxSq.emplace_back(x, x * x);
+    vsin2X.emplace_back(x, std::sin(2 * x));
   }
+
+  series1.append(vxSq.begin(), vxSq.end());
+  series2.append(vsin2X.begin(), vsin2X.end());
 
   plot.update();
 
