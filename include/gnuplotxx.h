@@ -815,7 +815,11 @@ public:
     }
   }
 
-  bool write(const std::string &buf) { return writeAll(m_fd, buf); }
+  template <std::size_t N> bool write(const char str[N]) const {
+    return writeAll(m_fd, str, N);
+  }
+
+  bool write(const std::string &buf) const { return writeAll(m_fd, buf); }
 
 private:
   pid_t m_pid;
