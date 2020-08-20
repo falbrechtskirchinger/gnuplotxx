@@ -20,6 +20,7 @@
 
 #pragma once
 
+#include <algorithm>
 #include <array>
 #include <cassert>
 #include <concepts>
@@ -601,9 +602,12 @@ struct PlotPriv;
 using PlotPrivPtr = std::shared_ptr<PlotPriv>;
 
 struct SeriesDataPriv {
-  SeriesDataPriv(int id) : id(id), empty(true) {}
+  SeriesDataPriv(int id) : id(id) {}
+
+  bool empty() const { return buf.empty(); }
+
   int id;
-  bool empty;
+  std::string buf;
   bool dirty;
 };
 
@@ -1001,83 +1005,82 @@ public:
   template <Number... Ns> Series &append(Ns... args) {
     assert(m_series);
 
-    const auto &[plot, buf, data] = appendPrologue();
+    auto &data = *m_series->data;
 
-    buf += "print \"";
-    detail::appendHelper(buf, args...);
-    buf += "\"\n";
+    detail::appendHelper(data.buf, args...);
 
-    return appendEpilogue(plot, buf, data);
+    data.buf += '\n';
+    data.dirty = true;
+
+    return *this;
   }
 
   template <TupleLikeOfNumbers T> Series &append(const T &t) {
     assert(m_series);
 
-    const auto &[plot, buf, data] = appendPrologue();
+    auto &data = *m_series->data;
 
-    detail::appendHelper(buf, t);
+    detail::appendHelper(data.buf, t);
 
-    return appendEpilogue(plot, buf, data);
+    data.dirty = true;
+
+    return *this;
   }
 
   template <std::input_iterator I, std::sentinel_for<I> S>
   Series &append(I first, S last) requires(IsNumberV<typename I::value_type>) {
     assert(m_series);
 
-    const auto &[plot, buf, data] = appendPrologue();
+    auto &data = *m_series->data;
 
     if (first != last)
-      fmt::format_to(std::back_inserter(buf), "print \"{}", *(first++));
+      fmt::format_to(std::back_inserter(data.buf), "{}", *(first++));
 
     while (first != last)
-      fmt::format_to(std::back_inserter(buf), " {}", *(first++));
+      fmt::format_to(std::back_inserter(data.buf), " {}", *(first++));
 
-    buf += "\"\n";
+    data.buf += '\n';
+    data.dirty = true;
 
-    return appendEpilogue(plot, buf, data);
+    return *this;
   }
 
   template <std::input_iterator I, std::sentinel_for<I> S>
-  Series &append(I first, S last, std::size_t batchSize = 64) requires(
-      !IsNumberV<typename I::value_type> &&
-      IsTupleLikeOfNumbersV<typename I::value_type>) {
+  Series &
+  append(I first,
+         S last) requires(!IsNumberV<typename I::value_type> &&
+                          IsTupleLikeOfNumbersV<typename I::value_type>) {
     if (first == last)
       return *this;
 
     assert(m_series);
 
-    const auto &[plot, buf, data] = appendPrologue();
+    auto &data = *m_series->data;
 
-    while (first != last) {
-      for (std::size_t i = 0; first != last && i < batchSize; ++i) {
-        buf += "print \"";
-        detail::appendHelper(buf, *(first++));
-        buf += "\"\n";
-      }
-      if (!plot.gp.write(buf))
-        throw std::system_error(errno, std::generic_category(),
-                                "Series: append: write print command");
-      buf.clear();
-    }
+    std::for_each(first, last,
+                  [&](auto t) { detail::appendHelper(data.buf, t); });
 
-    return appendEpilogue(data);
+    data.dirty = true;
+    ;
+
+    return *this;
   }
 
   Series &clear() {
     assert(m_series);
 
     auto &plot = m_series->plot;
-    auto &buf = plot.buf;
     auto &data = *m_series->data;
-    buf.clear();
 
-    fmt::format_to(std::back_inserter(buf), "undefine $_{}\n", data.id);
-    if (!plot.gp.write(buf))
+    plot.buf.clear();
+    data.buf.clear();
+    data.dirty = true;
+
+    fmt::format_to(std::back_inserter(plot.buf), "undefine $_{}\n", data.id);
+
+    if (!plot.gp.write(plot.buf))
       throw std::system_error(errno, std::generic_category(),
                               "Series: clear: write");
-
-    data.empty = true;
-    data.dirty = true;
 
     return *this;
   }
@@ -1085,43 +1088,6 @@ public:
   operator bool() const { return (bool)m_series; }
 
 private:
-  struct AppendPrologueResult {
-    detail::PlotPriv &plot;
-    std::string &buf;
-    detail::SeriesDataPrivPtr &data;
-  };
-
-  AppendPrologueResult appendPrologue() {
-    auto &plot = m_series->plot;
-    auto &buf = plot.buf;
-    auto &data = m_series->data;
-    buf.clear();
-
-    if (data->id != plot.activeDataId) {
-      fmt::format_to(std::back_inserter(buf), "set print $_{} append\n",
-                     data->id);
-      plot.activeDataId = data->id;
-    }
-
-    return {plot, buf, data};
-  }
-
-  Series &appendEpilogue(detail::SeriesDataPrivPtr &data) {
-    data->empty = false;
-    data->dirty = true;
-
-    return *this;
-  }
-
-  Series &appendEpilogue(detail::PlotPriv &plot, std::string &buf,
-                         detail::SeriesDataPrivPtr &data) {
-    if (!plot.gp.write(buf))
-      throw std::system_error(errno, std::generic_category(),
-                              "Series: append (epilogue): write");
-
-    return appendEpilogue(data);
-  }
-
   detail::SeriesPrivPtr m_series;
 };
 
@@ -1305,7 +1271,6 @@ public:
       return;
 
     auto &buf = m_plot->buf;
-    buf.clear();
 
     bool dirty = m_plot->dirty;
     bool axesDirty = false;
@@ -1318,9 +1283,17 @@ public:
         continue;
       }
 
-      if (!series->data->empty) {
+      if (!series->data->empty()) {
         dirty |= series->dirty | series->data->dirty;
         series->dirty = series->data->dirty = false;
+
+        buf.clear();
+        fmt::format_to(std::back_inserter(buf), "$_{} <<EOD\n",
+                       series->data->id);
+        if (!m_plot->gp.write(buf) || !m_plot->gp.write(series->data->buf) ||
+            !m_plot->gp.write("EOD\n"))
+          throw std::system_error(errno, std::generic_category(),
+                                  "Plot: update: write data block here-doc");
 
         if (series->axesDirty) {
           axisUsed[axisIndex(series->axes.x())] = true;
@@ -1333,6 +1306,8 @@ public:
     }
 
     if (dirty) {
+      buf.clear();
+
       fmt::format_to(std::back_inserter(buf),
                      "set terminal qt enhanced title \"{}\" font \"{},{}\"",
                      m_plot->title, m_plot->font, m_plot->fontSize);
@@ -1375,7 +1350,7 @@ public:
       buf += "plot ";
 
       for (auto series : m_plot->series) {
-        if (series->data->empty)
+        if (series->data->empty())
           continue;
 
         if (!first)
